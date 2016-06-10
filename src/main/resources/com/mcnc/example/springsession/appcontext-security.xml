@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<security:global-method-security pre-post-annotations="enabled" />
+
+	<security:http use-expressions="true"
+		authentication-manager-ref="authManager">
+		
+		<security:intercept-url pattern="/login" access="permitAll" />
+		<security:intercept-url pattern="/resources/**" access="permitAll" />
+		<security:intercept-url pattern="/**" access="isAuthenticated()" />
+
+		<security:form-login login-page="/login"
+			authentication-failure-url="/login?error"
+			default-target-url="/" password-parameter="password" 
+			username-parameter="username"/>
+			
+		<security:logout logout-success-url="/login" delete-cookies="SESSIONID"/>
+		
+		<security:csrf disabled="true"/>
+	</security:http>
+
+	<security:authentication-manager alias="authManager">
+		<security:authentication-provider>
+			<security:user-service>
+				<security:user name="admin" password="123" authorities="ROLE_ADMIN" />
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
